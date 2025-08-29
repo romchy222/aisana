@@ -1,0 +1,521 @@
+{% extends "base_new.html" %}
+
+{% block title %}{{ _('app.title') }} - {{ _('app.subtitle') }}{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">{{ _('app.title') }}</h1>
+            <p class="hero-subtitle">{{ _('app.description') }}</p>
+            <div class="hero-cta">
+                <a href="{{ url_for('views.chat_new') }}" class="btn-hero btn-hero-primary">
+                    <i class="fas fa-comments"></i>
+                    Начать общение
+                </a>
+                <a href="#features" class="btn-hero btn-hero-secondary">
+                    <i class="fas fa-info-circle"></i>
+                    Узнать больше
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- AI SANA Section -->
+<section class="py-5 sana-section position-relative" 
+ style="background: url('{{ url_for('static', filename='css/ai-sana-bg.jpeg') }}') no-repeat center center/cover;">
+
+  <!-- затемняющий слой -->
+  <div class="position-absolute top-0 start-0 w-100 h-100" 
+       style="background: black; opacity: 0.7; z-index: 1;"></div>
+
+  <div class="container position-relative" style="z-index: 2;">
+      <div class="row align-items-center g-4">
+
+        <!-- Текстовый блок -->
+        <div class="col-lg-7">
+          <div class="p-4 rounded-3" style="background: rgba(0, 0, 0, 0.6); color: white;">
+            <h2 class="fw-bold mb-3">О программе AI SANA</h2>
+            <p>
+              Программа AI SANA — инициатива Министерства науки и высшего образования для внедрения передовых технологий искусственного интеллекта в образование.
+            </p>
+            <p>
+              Охватывает <b>100 000 студентов</b>, стимулирует создание DeepTech-стартапов, развитие ИИ-компетенций и технологического предпринимательства.
+            </p>
+            <p>
+              Проходит в 3 этапа: массовая подготовка (650 тыс студентов), изучение ML и AI бизнеса, акселерация 1.5 тыс стартапов с поддержкой экспертов
+              <i>Stanford, Imperial и King's College</i>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Картинка с подписью -->
+        <div class="col-lg-5 text-center">
+            <img src="{{ url_for('static', filename='css/minister-presentation.jpeg') }}" 
+                 alt="Презентация AI SANA" 
+                 class="img-fluid rounded-3 shadow">
+
+          <p class="mt-2 text-white">
+            Министр и Президент РК на презентации программы AI SANA
+          </p>
+        </div>
+      </div>
+  </div>
+</section>
+
+
+<!-- Features Section -->
+<section id="features" class="features-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Возможности системы</h2>
+            <p class="section-subtitle">Современный ИИ-помощник для студентов и абитуриентов университета Болашак</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h5 class="feature-title">{{ _('features.ai_powered') }}</h5>
+                    <p class="feature-description">{{ _('features.ai_powered_desc') }}</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h5 class="feature-title">{{ _('features.multilingual') }}</h5>
+                    <p class="feature-description">{{ _('features.multilingual_desc') }}</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <h5 class="feature-title">{{ _('features.specialized_agents') }}</h5>
+                    <p class="feature-description">{{ _('features.specialized_agents_desc') }}</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h5 class="feature-title">{{ _('features.knowledge_base') }}</h5>
+                    <p class="feature-description">{{ _('features.knowledge_base_desc') }}</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h5 class="feature-title">{{ _('features.realtime') }}</h5>
+                    <p class="feature-description">{{ _('features.realtime_desc') }}</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <h5 class="feature-title">{{ _('features.voice_support') }}</h5>
+                    <p class="feature-description">{{ _('features.voice_support_desc') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Agents Section -->
+<section class="agents-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Наши специализированные агенты</h2>
+            <p class="section-subtitle">Каждый агент обучен для решения специфических задач и вопросов</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="agent-card" onclick="startChatWithAgent('admission')">
+                    <div class="agent-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h5 class="agent-title">{{ _('agent.admission') }}</h5>
+                    <p class="agent-description">Поможет с вопросами поступления, требований и процедур зачисления</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="agent-card" onclick="startChatWithAgent('scholarship')">
+                    <div class="agent-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h5 class="agent-title">{{ _('agent.scholarship') }}</h5>
+                    <p class="agent-description">Консультации по стипендиям, грантам и финансовой поддержке</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="agent-card" onclick="startChatWithAgent('academic')">
+                    <div class="agent-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h5 class="agent-title">{{ _('agent.academic') }}</h5>
+                    <p class="agent-description">Академические вопросы, расписание, экзамены и учебные программы</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="agent-card" onclick="startChatWithAgent('student_life')">
+                    <div class="agent-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h5 class="agent-title">{{ _('agent.student_life') }}</h5>
+                    <p class="agent-description">Студенческая жизнь, общежития, мероприятия и внеучебная деятельность</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="agent-card" onclick="startChatWithAgent('general')">
+                    <div class="agent-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h5 class="agent-title">{{ _('agent.general') }}</h5>
+                    <p class="agent-description">Общая информация о университете, контакты и базовые вопросы</p>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card h-100 border-0" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <i class="fas fa-users fa-2x mb-3"></i>
+                        <h3 class="fw-bold" id="total-users-main-display">{{ "{:,}".format(stats.total_users) if stats else "0" }}</h3>
+                        <p class="mb-0">Общее количество пользователей</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card h-100 border-0" style="background: linear-gradient(135deg, var(--secondary), var(--secondary-dark)); color: white;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <i class="fas fa-comments fa-2x mb-3"></i>
+                        <h3 class="fw-bold" id="total-queries-display">{{ "{:,}".format(stats.total_queries) if stats else "50,000" }}+</h3>
+                        <p class="mb-0">Обработанных запросов</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card h-100 border-0" style="background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <i class="fas fa-clock fa-2x mb-3"></i>
+                        <h3 class="fw-bold">24/7</h3>
+                        <p class="mb-0">Круглосуточная поддержка</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 mb-4">
+                <div class="card h-100 border-0" style="background: linear-gradient(135deg, var(--success), #16a34a); color: white;">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <i class="fas fa-percentage fa-2x mb-3"></i>
+                        <h3 class="fw-bold">{{ stats.accuracy_rate if stats else 95 }}%</h3>
+                        <p class="mb-0">Точность ответов</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if stats and stats.agent_stats %}
+        <!-- Agent Usage Statistics -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="text-center mb-4">
+                    <h4>Статистика использования агентов</h4>
+                </div>
+                <div class="row">
+                    {% for agent in stats.agent_stats[:4] %}
+                    <div class="col-lg-3 col-sm-6 mb-3">
+                        <div class="card border-0" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                            <div class="card-body text-center">
+                                <h5 class="fw-bold">{{ "{:,}".format(agent.count) }}</h5>
+                                <p class="mb-0 text-muted">{{ agent.name or 'Общий агент' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Statistics Section -->
+        <div class="row mt-5" id="user-statistics">
+            <div class="col-12">
+                <div class="text-center mb-4">
+                    <h4>Статистика пользователей</h4>
+                    <p class="text-muted">Аналитика активности и использования системы</p>
+                </div>
+                
+                <!-- User Metrics Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-2x mb-2"></i>
+                                <h4 class="fw-bold" id="total-users-display">-</h4>
+                                <p class="mb-0">Всего пользователей</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card border-0" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white;">
+                            <div class="card-body text-center">
+                                <i class="fas fa-user-clock fa-2x mb-2"></i>
+                                <h4 class="fw-bold" id="active-users-24h-display">-</h4>
+                                <p class="mb-0">Активных за 24ч</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card border-0" style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: white;">
+                            <div class="card-body text-center">
+                                <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                <h4 class="fw-bold" id="avg-queries-per-user-display">-</h4>
+                                <p class="mb-0">Запросов на пользователя</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card border-0" style="background: linear-gradient(135deg, #43e97b, #38f9d7); color: white;">
+                            <div class="card-body text-center">
+                                <i class="fas fa-percentage fa-2x mb-2"></i>
+                                <h4 class="fw-bold" id="retention-rate-display">-</h4>
+                                <p class="mb-0">Удержание 7 дней</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Usage Patterns -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-0" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                            <div class="card-body">
+                                <h6 class="card-title mb-3">
+                                    <i class="fas fa-clock me-2"></i>
+                                    Активность по часам
+                                </h6>
+                                <div id="hourly-activity" class="small">
+                                    <div class="text-center text-muted">Загрузка...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-0" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                            <div class="card-body">
+                                <h6 class="card-title mb-3">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    Активность по дням недели
+                                </h6>
+                                <div id="daily-activity" class="small">
+                                    <div class="text-center text-muted">Загрузка...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="mb-4">Готовы начать?</h2>
+                <p class="lead mb-4">Получите мгновенные ответы на ваши вопросы от нашего умного ИИ-помощника</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="{{ url_for('views.chat_new') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-comments me-2"></i>
+                        Начать чат
+                    </a>
+                    <a href="#features" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-question-circle me-2"></i>
+                        Узнать больше
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function startChatWithAgent(agentType) {
+    // Store selected agent in localStorage
+    localStorage.setItem('selectedAgent', agentType);
+    // Redirect to chat
+    window.location.href = '{{ url_for("views.chat_new") }}';
+}
+
+// Update statistics in real-time
+async function updateStatistics() {
+    try {
+        const response = await fetch('/api/statistics');
+        if (!response.ok) return;
+        
+        const data = await response.json();
+        if (!data.success) return;
+        
+        const stats = data.statistics;
+        
+        // Update specific statistics cards by ID
+        const totalQueriesEl = document.getElementById('total-queries-display');
+        if (totalQueriesEl) {
+            totalQueriesEl.innerHTML = stats.total_queries.toLocaleString() + '+';
+        }
+        
+        // Update total users in main statistics
+        const totalUsersMainEl = document.getElementById('total-users-main-display');
+        if (totalUsersMainEl && stats.total_users !== undefined) {
+            totalUsersMainEl.innerHTML = stats.total_users.toLocaleString();
+        }
+        
+        // Update other statistics if elements exist
+        const statsCards = document.querySelectorAll('.card h3');
+        if (statsCards.length >= 4) {
+            // Users card (first) - already updated above with ID
+            // Queries card (second) - already updated above with ID
+            // 24/7 card (third) - keep as is
+            // Accuracy card (fourth)
+            statsCards[3].innerHTML = stats.satisfaction_rate + '%';
+        }
+        
+        // Update user statistics if available
+        if (stats.user_stats) {
+            const userStats = stats.user_stats;
+            
+            // Update user statistics cards
+            const totalUsersEl = document.getElementById('total-users-display');
+            if (totalUsersEl) {
+                totalUsersEl.innerHTML = userStats.total_users.toLocaleString();
+            }
+            
+            const activeUsers24hEl = document.getElementById('active-users-24h-display');
+            if (activeUsers24hEl) {
+                activeUsers24hEl.innerHTML = userStats.active_users_24h.toLocaleString();
+            }
+            
+            const avgQueriesEl = document.getElementById('avg-queries-per-user-display');
+            if (avgQueriesEl) {
+                avgQueriesEl.innerHTML = userStats.avg_queries_per_user;
+            }
+            
+            const retentionEl = document.getElementById('retention-rate-display');
+            if (retentionEl) {
+                retentionEl.innerHTML = userStats.user_growth.weekly_retention + '%';
+            }
+        }
+        
+        // Update usage patterns if available
+        if (stats.usage_patterns) {
+            const patterns = stats.usage_patterns;
+            
+            // Update hourly activity
+            const hourlyDiv = document.getElementById('hourly-activity');
+            if (hourlyDiv && patterns.hourly_stats) {
+                hourlyDiv.innerHTML = patterns.hourly_stats.map(h => 
+                    `<div class="d-flex justify-content-between mb-1">
+                        <span>${h.hour}:00</span>
+                        <span class="fw-bold">${h.count} запросов</span>
+                    </div>`
+                ).join('');
+            }
+            
+            // Update daily activity
+            const dailyDiv = document.getElementById('daily-activity');
+            if (dailyDiv && patterns.daily_stats) {
+                dailyDiv.innerHTML = patterns.daily_stats.map(d => 
+                    `<div class="d-flex justify-content-between mb-1">
+                        <span>${d.day}</span>
+                        <span class="fw-bold">${d.count} запросов</span>
+                    </div>`
+                ).join('');
+            }
+        }
+        
+        console.log('Statistics updated:', stats);
+    } catch (error) {
+        console.warn('Failed to update statistics:', error);
+    }
+}
+
+// Update statistics on page load and periodically
+document.addEventListener('DOMContentLoaded', function() {
+    updateStatistics();
+    
+    // Update statistics every 5 minutes
+    setInterval(updateStatistics, 5 * 60 * 1000);
+});
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Add scroll animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in-up');
+        }
+    });
+}, observerOptions);
+
+// Observe feature and agent cards
+document.querySelectorAll('.feature-card, .agent-card').forEach(card => {
+    observer.observe(card);
+});
+</script>
+{% endblock %}

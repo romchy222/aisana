@@ -1,0 +1,982 @@
+{% extends "base_new.html" %}
+
+{% block title %}Панель администратора - BolashakBot{% endblock %}
+
+{% block head %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Particles.js for epic background -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<style>
+/* === EPIC MODERN ADMIN DASHBOARD - MIND BLOWING DESIGN === */
+:root {
+    --admin-primary: #6366f1;
+    --admin-primary-dark: #4f46e5;
+    --admin-secondary: #10b981;
+    --admin-accent: #f59e0b;
+    --admin-danger: #ef4444;
+    --admin-bg: #0f1419;
+    --admin-surface: #1a2332;
+    --admin-surface-light: #252b3a;
+    --admin-border: #334155;
+    --admin-text: #e2e8f0;
+    --admin-text-muted: #94a3b8;
+    --admin-glass: rgba(26, 35, 50, 0.8);
+    --admin-glow: rgba(99, 102, 241, 0.3);
+    --admin-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --admin-shadow-glow: 0 0 50px var(--admin-glow);
+}
+
+/* Dark/Light theme support */
+[data-theme="light"] {
+    --admin-bg: #f8fafc;
+    --admin-surface: #ffffff;
+    --admin-surface-light: #f1f5f9;
+    --admin-border: #e2e8f0;
+    --admin-text: #1e293b;
+    --admin-text-muted: #64748b;
+    --admin-glass: rgba(255, 255, 255, 0.9);
+    --admin-glow: rgba(99, 102, 241, 0.2);
+    --admin-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --admin-shadow-glow: 0 0 30px var(--admin-glow);
+}
+
+/* Ensure text visibility */
+body {
+    color: var(--admin-text);
+    background-color: var(--admin-bg);
+}
+
+/* Fix text contrast issues */
+.epic-title {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary), var(--admin-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Fallback for browsers that don't support background-clip */
+@supports not (background-clip: text) or not (-webkit-background-clip: text) {
+    .epic-title {
+        color: var(--admin-text);
+        background: none;
+    }
+}
+
+/* Futuristic Background */
+.admin-dashboard {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--admin-bg) 0%, #1e2532 50%, #252b3a 100%);
+    position: relative;
+    overflow-x: hidden;
+}
+
+[data-theme="light"] .admin-dashboard {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+}
+
+/* Animated particles background */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    opacity: 0.6;
+}
+
+.admin-content {
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+}
+
+/* Epic Header with Glassmorphism */
+.epic-header {
+    background: var(--admin-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--admin-border);
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--admin-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.epic-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, var(--admin-glow), transparent);
+    opacity: 0.1;
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.epic-subtitle {
+    color: var(--admin-text-muted);
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.epic-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* Mind-blowing Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.epic-stat-card {
+    background: var(--admin-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--admin-border);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: var(--admin-shadow);
+}
+
+.epic-stat-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--admin-glow) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.epic-stat-card:hover::before {
+    opacity: 1;
+}
+
+.epic-stat-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--admin-shadow-glow);
+    border-color: var(--admin-primary);
+}
+
+.stat-icon-wrapper {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 1.5rem;
+}
+
+.stat-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-icon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    border-radius: inherit;
+    filter: blur(10px);
+    opacity: 0.8;
+}
+
+.stat-icon > * {
+    position: relative;
+    z-index: 1;
+}
+
+.stat-value {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--admin-text);
+    margin: 0;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 0 20px var(--admin-glow);
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--admin-text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-change {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    position: relative;
+    z-index: 2;
+}
+
+/* Epic Action Buttons */
+.epic-btn {
+    background: linear-gradient(135deg, var(--admin-primary), var(--admin-primary-dark));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.epic-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+}
+
+.epic-btn:hover::before {
+    transform: translateX(100%);
+}
+
+.epic-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+}
+
+.epic-btn-secondary {
+    background: var(--admin-surface);
+    color: var(--admin-text);
+    border: 1px solid var(--admin-border);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.epic-btn-success {
+    background: linear-gradient(135deg, var(--admin-secondary), #059669);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.epic-btn-warning {
+    background: linear-gradient(135deg, var(--admin-accent), #d97706);
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+}
+
+.epic-btn-danger {
+    background: linear-gradient(135deg, var(--admin-danger), #dc2626);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+}
+
+/* Epic Charts and Data Visualization */
+.epic-chart-card {
+    background: var(--admin-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--admin-border);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: var(--admin-shadow);
+    position: relative;
+    max-height: 500px;
+    overflow: hidden;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.chart-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--admin-text);
+    margin: 0;
+}
+
+/* Chart containers with fixed heights */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+#dailyUsageChart {
+    max-height: 200px !important;
+    height: 200px !important;
+}
+
+#agentUsageChart {
+    max-height: 250px !important;
+    height: 250px !important;
+}
+
+/* Epic Navigation */
+.epic-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.epic-nav-card {
+    background: var(--admin-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--admin-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.epic-nav-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--admin-glow), transparent);
+    transition: left 0.5s;
+}
+
+.epic-nav-card:hover::before {
+    left: 100%;
+}
+
+.epic-nav-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--admin-primary);
+    color: inherit;
+    text-decoration: none;
+}
+
+.nav-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.nav-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--admin-text);
+    margin: 0 0 0.5rem 0;
+}
+
+.nav-description {
+    font-size: 0.9rem;
+    color: var(--admin-text-muted);
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .epic-title { font-size: 2rem; }
+    .epic-actions { flex-direction: column; }
+    .stats-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .epic-nav-grid { grid-template-columns: 1fr; }
+}
+
+/* Animation utilities */
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Particles Background -->
+<div id="particles-js"></div>
+
+<!-- Epic Admin Dashboard -->
+<div class="admin-dashboard">
+    <div class="admin-content">
+        <!-- Epic Header -->
+        <div class="epic-header fade-in-up">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="epic-title">
+                        <i class="fas fa-bolt me-3"></i>
+                        ADMIN CONTROL CENTER
+                    </h1>
+                    <p class="epic-subtitle">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        Добро пожаловать в панель управления BolashakBot
+                    </p>
+                </div>
+                <div class="epic-actions">
+                    <button onclick="refreshAnalytics()" class="epic-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        Обновить данные
+                    </button>
+                    <a href="{{ url_for('admin.queries') }}" class="epic-btn epic-btn-success">
+                        <i class="fas fa-chart-line"></i>
+                        Аналитика
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Epic Stats Grid -->
+        <div class="stats-grid">
+            <div class="epic-stat-card fade-in-up stagger-1">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, var(--admin-primary), var(--admin-primary-dark));">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                </div>
+                <h3 class="stat-value">{{ total_queries or 0 }}</h3>
+                <p class="stat-label">Всего запросов</p>
+                <div class="stat-change text-success">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+12% за неделю</span>
+                </div>
+            </div>
+
+            <div class="epic-stat-card fade-in-up stagger-2">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, var(--admin-secondary), #059669);">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                </div>
+                <h3 class="stat-value">{{ total_agent_knowledge or 0 }}</h3>
+                <p class="stat-label">Записей агентов</p>
+                <div class="stat-change text-info">
+                    <i class="fas fa-database"></i>
+                    <span>База знаний</span>
+                </div>
+            </div>
+
+            <div class="epic-stat-card fade-in-up stagger-3">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, var(--admin-accent), #d97706);">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                </div>
+                <h3 class="stat-value">{{ avg_response_time or 0 }}<small>s</small></h3>
+                <p class="stat-label">Время ответа</p>
+                <div class="stat-change text-warning">
+                    <i class="fas fa-clock"></i>
+                    <span>Среднее значение</span>
+                </div>
+            </div>
+
+            <div class="epic-stat-card fade-in-up stagger-4">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                </div>
+                <h3 class="stat-value">{{ satisfaction_rate or 0 }}<small>%</small></h3>
+                <p class="stat-label">Удовлетворенность</p>
+                <div class="stat-change text-success">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Рейтинг пользователей</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Epic Charts Section -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="epic-chart-card fade-in-up">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Активность системы
+                        </h3>
+                        <div class="epic-actions">
+                            <button class="epic-btn epic-btn-secondary" onclick="toggleChartType()">
+                                <i class="fas fa-exchange-alt"></i>
+                                Переключить
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="dailyUsageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="epic-chart-card fade-in-up">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-robot me-2"></i>
+                            Агенты
+                        </h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="agentUsageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Epic Navigation Grid -->
+        <div class="epic-nav-grid">
+            <a href="{{ url_for('admin.queries') }}" class="epic-nav-card fade-in-up stagger-1">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--admin-primary), var(--admin-primary-dark));">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h4 class="nav-title">Запросы пользователей</h4>
+                <p class="nav-description">Просмотр и анализ всех запросов к системе</p>
+            </a>
+
+            <a href="{{ url_for('admin.agent_knowledge') }}" class="epic-nav-card fade-in-up stagger-2">
+                <div class="nav-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h4 class="nav-title">Базы знаний агентов</h4>
+                <p class="nav-description">Управление знаниями специализированных агентов</p>
+            </a>
+
+            <a href="{{ url_for('admin.documents') }}" class="epic-nav-card fade-in-up stagger-3">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--admin-accent), #d97706);">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h4 class="nav-title">Документы</h4>
+                <p class="nav-description">Загрузка и управление документами системы</p>
+            </a>
+
+            <a href="{{ url_for('admin.web_sources') }}" class="epic-nav-card fade-in-up stagger-4">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--admin-secondary), #059669);">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h4 class="nav-title">Веб-источники</h4>
+                <p class="nav-description">Подключение внешних источников данных</p>
+            </a>
+
+            <a href="{{ url_for('admin.schedule') }}" class="epic-nav-card fade-in-up stagger-5">
+                <div class="nav-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h4 class="nav-title">Управление расписанием</h4>
+                <p class="nav-description">Факультеты, группы, предметы и расписание занятий</p>
+            </a>
+
+            <a href="{{ url_for('admin.feedback') }}" class="epic-nav-card fade-in-up stagger-1">
+                <div class="nav-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h4 class="nav-title">Обратная связь</h4>
+                <p class="nav-description">Отзывы и оценки пользователей</p>
+            </a>
+
+            <a href="{{ url_for('admin.logout') }}" class="epic-nav-card fade-in-up stagger-2">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--admin-danger), #dc2626);">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+                <h4 class="nav-title">Выход</h4>
+                <p class="nav-description">Завершить сессию администратора</p>
+            </a>
+        </div>
+
+        <!-- Recent Queries Epic Table -->
+        <div class="epic-chart-card fade-in-up">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-history me-2"></i>
+                    Последние запросы пользователей
+                </h3>
+                <div class="epic-actions">
+                    <a href="{{ url_for('admin.queries') }}" class="epic-btn epic-btn-secondary">
+                        <i class="fas fa-external-link-alt"></i>
+                        Подробнее
+                    </a>
+                </div>
+            </div>
+            <div class="table-responsive"
+                style="max-height: 400px; overflow-y: auto;">
+                <div class="table-container">
+                {% if recent_queries %}
+                    <table class="table" style="background: transparent; color: var(--admin-text);">
+                        <thead style="border-bottom: 2px solid var(--admin-border);">
+                            <tr>
+                                <th style="color: var(--admin-text); padding: 1rem 0.75rem;">Время</th>
+                                <th style="color: var(--admin-text); padding: 1rem 0.75rem;">Сообщение</th>
+                                <th style="color: var(--admin-text); padding: 1rem 0.75rem;">Агент</th>
+                                <th style="color: var(--admin-text); padding: 1rem 0.75rem;">Язык</th>
+                                <th style="color: var(--admin-text); padding: 1rem 0.75rem;">Время ответа</th>
+                                <th style="color: var(--admin-text); padding: 1rem 0.75rem;">Уверенность</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for query in recent_queries %}
+                            <tr style="border-bottom: 1px solid var(--admin-border);">
+                                <td style="padding: 1rem 0.75rem; color: var(--admin-text-muted);">
+                                    {{ query.created_at.strftime('%d.%m %H:%M') }}
+                                </td>
+                                <td style="padding: 1rem 0.75rem; color: var(--admin-text);">
+                                    {{ query.user_message[:50] }}{% if query.user_message|length > 50 %}...{% endif %}
+                                </td>
+                                <td style="padding: 1rem 0.75rem;">
+                                    {% if query.agent_name %}
+                                        <span class="epic-btn epic-btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                            {{ query.agent_name }}
+                                        </span>
+                                    {% else %}
+                                        <span style="color: var(--admin-text-muted);">—</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 1rem 0.75rem;">
+                                    <span class="epic-btn {{ 'epic-btn-success' if query.language == 'kz' else '' }}" 
+                                          style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                        {{ 'РУС' if query.language == 'ru' else 'ҚАЗ' if query.language == 'kz' else 'ENG' }}
+                                    </span>
+                                </td>
+                                <td style="padding: 1rem 0.75rem; color: var(--admin-text-muted);">
+                                    {{ "%.1f"|format(query.response_time or 0) }}s
+                                </td>
+                                <td style="padding: 1rem 0.75rem;">
+                                    {% if query.agent_confidence %}
+                                        <div style="width: 60px; height: 8px; background: var(--admin-border); border-radius: 4px; overflow: hidden; position: relative;">
+                                            <div style="width: {{ (query.agent_confidence * 100)|round }}%; height: 100%; 
+                                                       background: linear-gradient(90deg, 
+                                                       {{ '#10b981' if query.agent_confidence >= 0.7 else '#f59e0b' if query.agent_confidence >= 0.4 else '#ef4444' }}, 
+                                                       {{ '#059669' if query.agent_confidence >= 0.7 else '#d97706' if query.agent_confidence >= 0.4 else '#dc2626' }});"></div>
+                                        </div>
+                                        <small style="color: var(--admin-text-muted);">{{ "%.0f"|format(query.agent_confidence * 100) }}%</small>
+                                    {% else %}
+                                        <span style="color: var(--admin-text-muted);">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div style="text-align: center; padding: 4rem; color: var(--admin-text-muted);">
+                        <i class="fas fa-robot" style="font-size: 4rem; margin-bottom: 2rem; opacity: 0.3;"></i>
+                        <h4>Пока нет запросов</h4>
+                        <p>Система готова к работе!</p>
+                    </div>
+                {% endif %}
+            </div>
+            </div>
+        </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// === EPIC ADMIN DASHBOARD JAVASCRIPT - MIND BLOWING EFFECTS ===
+
+// Initialize particles.js for epic background
+particlesJS('particles-js', {
+    particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: ['#6366f1', '#10b981', '#f59e0b', '#8b5cf6'] },
+        shape: {
+            type: ['circle', 'triangle'],
+            stroke: { width: 0, color: '#000000' },
+            polygon: { nb_sides: 6 }
+        },
+        opacity: {
+            value: 0.3,
+            random: true,
+            anim: { enable: true, speed: 0.5, opacity_min: 0.1, sync: false }
+        },
+        size: {
+            value: 3,
+            random: true,
+            anim: { enable: true, speed: 2, size_min: 0.5, sync: false }
+        },
+        line_linked: {
+            enable: true,
+            distance: 150,
+            color: '#6366f1',
+            opacity: 0.2,
+            width: 1
+        },
+        move: {
+            enable: true,
+            speed: 1,
+            direction: 'none',
+            random: true,
+            straight: false,
+            out_mode: 'out',
+            bounce: false
+        }
+    },
+    interactivity: {
+        detect_on: 'canvas',
+        events: {
+            onhover: { enable: true, mode: 'repulse' },
+            onclick: { enable: true, mode: 'push' },
+            resize: true
+        },
+        modes: {
+            grab: { distance: 400, line_linked: { opacity: 1 } },
+            bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
+            repulse: { distance: 200, duration: 0.4 },
+            push: { particles_nb: 4 },
+            remove: { particles_nb: 2 }
+        }
+    },
+    retina_detect: true
+});
+
+// Epic hover effects for stat cards
+document.querySelectorAll('.epic-stat-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-15px) scale(1.05)';
+        this.style.boxShadow = '0 25px 60px rgba(99, 102, 241, 0.4)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+        this.style.boxShadow = 'var(--admin-shadow)';
+    });
+});
+
+// Epic nav card effects  
+document.querySelectorAll('.epic-nav-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-8px) scale(1.02)';
+        const icon = this.querySelector('.nav-icon');
+        if (icon) {
+            icon.style.transform = 'rotate(5deg) scale(1.1)';
+        }
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+        const icon = this.querySelector('.nav-icon');
+        if (icon) {
+            icon.style.transform = 'rotate(0deg) scale(1)';
+        }
+    });
+});
+
+// Chart colors with epic gradients
+const chartColors = {
+    primary: '#6366f1',
+    secondary: '#10b981',
+    accent: '#f59e0b',
+    danger: '#ef4444',
+    purple: '#8b5cf6',
+    pink: '#ec4899',
+    cyan: '#06b6d4',
+    teal: '#14b8a6'
+};
+
+// Epic Chart Initialization
+function initializeEpicCharts() {
+    // Daily Usage Chart with epic styling
+    const dailyCtx = document.getElementById('dailyUsageChart');
+    if (dailyCtx) {
+        new Chart(dailyCtx, {
+            type: 'line',
+            data: {
+                labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+                datasets: [{
+                    label: 'Запросы',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    borderColor: chartColors.primary,
+                    backgroundColor: `${chartColors.primary}20`,
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: chartColors.primary,
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'var(--admin-border)' },
+                        ticks: { color: 'var(--admin-text-muted)' }
+                    },
+                    y: {
+                        grid: { color: 'var(--admin-border)' },
+                        ticks: { color: 'var(--admin-text-muted)' }
+                    }
+                }
+            }
+        });
+    }
+
+    // Agent Usage Pie Chart
+    const agentCtx = document.getElementById('agentUsageChart');
+    if (agentCtx) {
+        new Chart(agentCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['AI-Abitur', 'KadrAI', 'UniNav', 'CareerNavigator', 'UniRoom'],
+                datasets: [{
+                    data: [30, 25, 20, 15, 10],
+                    backgroundColor: [
+                        chartColors.primary,
+                        chartColors.secondary,
+                        chartColors.accent,
+                        chartColors.purple,
+                        chartColors.pink
+                    ],
+                    borderWidth: 0,
+                    hoverBorderWidth: 3,
+                    hoverBorderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                aspectRatio: 1,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'var(--admin-text)',
+                            padding: 15,
+                            font: { size: 11 }
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Refresh Analytics with epic loading effect
+function refreshAnalytics() {
+    const btn = document.querySelector('[onclick="refreshAnalytics()"]');
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обновление...';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+    
+    // Simulate loading with epic effect
+    setTimeout(() => {
+        btn.innerHTML = '<i class="fas fa-check"></i> Готово!';
+        btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.background = '';
+            location.reload();
+        }, 1000);
+    }, 2000);
+}
+
+// Toggle chart type function
+function toggleChartType() {
+    console.log('Переключение типа графика...');
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Add epic entrance animations
+    const elements = document.querySelectorAll('.fade-in-up');
+    elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        
+        setTimeout(() => {
+            el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+    
+    // Initialize charts after particles
+    setTimeout(() => {
+        initializeEpicCharts();
+    }, 1000);
+    
+    // Add epic scroll effects
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const parallaxElements = document.querySelectorAll('.epic-stat-card');
+        
+        parallaxElements.forEach((el, index) => {
+            const speed = 0.5 + (index * 0.1);
+            el.style.transform = `translateY(${scrolled * speed * -0.1}px)`;
+        });
+    });
+    
+    console.log('🚀 EPIC ADMIN DASHBOARD LOADED - MIND = BLOWN! 🚀');
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление расписанием - BolashakChat Admin</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/modern-style.css') }}" rel="stylesheet">
+    
+    <style>
+        .schedule-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .schedule-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        .recent-item {
+            border-left: 4px solid #007bff;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body class="admin-body">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{{ url_for('admin.dashboard') }}">
+                <i class="fas fa-graduation-cap me-2"></i>BolashakChat Admin
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-link">
+                    <i class="fas fa-tachometer-alt me-1"></i>Панель управления
+                </a>
+                <a href="{{ url_for('views.index_new') }}" class="nav-link">
+                    <i class="fas fa-home me-1"></i>На сайт
+                </a>
+                <a href="{{ url_for('admin.logout') }}" class="nav-link">
+                    <i class="fas fa-sign-out-alt me-1"></i>Выход
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2">
+                <div class="card schedule-card">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold text-primary">
+                            <i class="fas fa-calendar-alt me-2"></i>Управление расписанием
+                        </h6>
+                        <div class="list-group list-group-flush">
+                            <a href="{{ url_for('admin.schedule') }}" class="list-group-item list-group-item-action active">
+                                <i class="fas fa-home me-2"></i>Обзор
+                            </a>
+                            <a href="{{ url_for('admin.manage_lessons') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-clock me-2"></i>Занятия
+                            </a>
+                            <a href="{{ url_for('admin.manage_faculties') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-university me-2"></i>Факультеты
+                            </a>
+                            <a href="{{ url_for('admin.manage_groups') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-users me-2"></i>Группы
+                            </a>
+                            <a href="{{ url_for('admin.manage_subjects') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-book me-2"></i>Предметы
+                            </a>
+                            <a href="{{ url_for('admin.manage_teachers') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>Преподаватели
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <!-- Page Title -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-primary fw-bold">
+                        <i class="fas fa-calendar-alt me-2"></i>Обзор расписания
+                    </h2>
+                </div>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-6 col-lg-2 mb-3">
+                        <div class="card schedule-card h-100">
+                            <div class="card-body text-center">
+                                <div class="stat-icon mx-auto mb-2" style="background: linear-gradient(45deg, #007bff, #0056b3);">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <h5 class="card-title">{{ total_schedules or 0 }}</h5>
+                                <p class="card-text text-muted">Занятий</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-2 mb-3">
+                        <div class="card schedule-card h-100">
+                            <div class="card-body text-center">
+                                <div class="stat-icon mx-auto mb-2" style="background: linear-gradient(45deg, #28a745, #1e7e34);">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h5 class="card-title">{{ total_groups or 0 }}</h5>
+                                <p class="card-text text-muted">Групп</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-2 mb-3">
+                        <div class="card schedule-card h-100">
+                            <div class="card-body text-center">
+                                <div class="stat-icon mx-auto mb-2" style="background: linear-gradient(45deg, #ffc107, #e0a800);">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <h5 class="card-title">{{ total_subjects or 0 }}</h5>
+                                <p class="card-text text-muted">Предметов</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-2 mb-3">
+                        <div class="card schedule-card h-100">
+                            <div class="card-body text-center">
+                                <div class="stat-icon mx-auto mb-2" style="background: linear-gradient(45deg, #dc3545, #b02a37);">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <h5 class="card-title">{{ total_teachers or 0 }}</h5>
+                                <p class="card-text text-muted">Преподавателей</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-2 mb-3">
+                        <div class="card schedule-card h-100">
+                            <div class="card-body text-center">
+                                <div class="stat-icon mx-auto mb-2" style="background: linear-gradient(45deg, #6f42c1, #59359a);">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <h5 class="card-title">{{ total_faculties or 0 }}</h5>
+                                <p class="card-text text-muted">Факультетов</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Schedules -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card schedule-card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-clock me-2"></i>Последние занятия
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                {% if recent_schedules %}
+                                    {% for schedule in recent_schedules %}
+                                        <div class="recent-item">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 class="mb-1 text-primary">{{ schedule.title }}</h6>
+                                                    <p class="mb-1">
+                                                        <strong>Группа:</strong> {{ schedule.group_name or 'Не указана' }} | 
+                                                        <strong>Преподаватель:</strong> {{ schedule.instructor or 'Не указан' }}
+                                                    </p>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-calendar me-1"></i>{{ schedule.start_time.strftime('%d.%m.%Y') if schedule.start_time else 'Не указана' }}
+                                                        <i class="fas fa-clock ms-2 me-1"></i>{{ schedule.start_time.strftime('%H:%M') if schedule.start_time else 'Не указано' }} - {{ schedule.end_time.strftime('%H:%M') if schedule.end_time else 'Не указано' }}
+                                                        <i class="fas fa-door-open ms-2 me-1"></i>{{ schedule.room or schedule.location or 'Не указана' }}
+                                                    </small>
+                                                </div>
+                                                <span class="badge bg-secondary">{{ schedule.schedule_type or 'Занятие' }}</span>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="text-center py-4">
+                                        <i class="fas fa-calendar-plus fa-3x text-muted mb-3"></i>
+                                        <h5 class="text-muted">Занятий пока нет</h5>
+                                        <p class="text-muted">Начните с добавления факультетов, групп и предметов</p>
+                                        <a href="{{ url_for('admin.manage_lessons') }}" class="btn btn-primary">
+                                            <i class="fas fa-plus me-2"></i>Добавить занятие
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card schedule-card">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-bolt me-2"></i>Быстрые действия
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <a href="{{ url_for('admin.manage_lessons') }}" class="btn btn-outline-primary w-100 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fas fa-plus fa-2x mb-2"></i>
+                                            <span>Добавить занятие</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <a href="{{ url_for('admin.manage_groups') }}" class="btn btn-outline-success w-100 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fas fa-users fa-2x mb-2"></i>
+                                            <span>Управление группами</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <a href="{{ url_for('admin.manage_subjects') }}" class="btn btn-outline-warning w-100 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fas fa-book fa-2x mb-2"></i>
+                                            <span>Управление предметами</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

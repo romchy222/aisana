@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Like/Dislike System</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-response { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .feedback-buttons { margin-top: 10px; }
+        button { margin: 5px; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>Тест системы лайк/дизлайк</h1>
+    
+    <button onclick="sendTestMessage()">Отправить тестовое сообщение</button>
+    
+    <div id="responses"></div>
+
+    <script>
+        async function sendTestMessage() {
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: "Расскажи о работе",
+                        language: "ru"
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (data.success) {
+                    displayResponse(data);
+                } else {
+                    console.error('Error:', data.error);
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+        
+        function displayResponse(data) {
+            const container = document.getElementById('responses');
+            const responseDiv = document.createElement('div');
+            responseDiv.className = 'test-response';
+            
+            responseDiv.innerHTML = `
+                <strong>Ответ:</strong> ${data.response}<br>
+                <strong>Агент:</strong> ${data.agent_name}<br>
+                <strong>Message ID:</strong> ${data.message_id}<br>
+                <strong>Feedback метаданные:</strong> ${JSON.stringify(data.feedback || {})}<br>
+                
+                <div class="feedback-buttons">
+                    <button onclick="sendFeedback('${data.message_id}', true)">👍 Лайк</button>
+                    <button onclick="sendFeedback('${data.message_id}', false)">👎 Дизлайк</button>
+                </div>
+            `;
+            
+            container.appendChild(responseDiv);
+        }
+        
+        async function sendFeedback(messageId, isLike) {
+            try {
+                const response = await fetch('/api/feedback/like-dislike', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message_id: messageId,
+                        is_like: isLike
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('Feedback response:', data);
+                
+                if (data.success) {
+                    alert(data.message);
+                } else {
+                    alert('Ошибка: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Feedback error:', error);
+                alert('Ошибка отправки feedback');
+            }
+        }
+    </script>
+</body>
+</html>

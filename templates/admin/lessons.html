@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление занятиями - BolashakChat Admin</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/modern-style.css') }}" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{{ url_for('admin.dashboard') }}">
+                <i class="fas fa-graduation-cap me-2"></i>BolashakChat Admin
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <a href="{{ url_for('admin.schedule') }}" class="nav-link">
+                    <i class="fas fa-calendar-alt me-1"></i>Расписание
+                </a>
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-link">
+                    <i class="fas fa-tachometer-alt me-1"></i>Панель управления
+                </a>
+                <a href="{{ url_for('admin.logout') }}" class="nav-link">
+                    <i class="fas fa-sign-out-alt me-1"></i>Выход
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold text-primary">
+                            <i class="fas fa-calendar-alt me-2"></i>Управление расписанием
+                        </h6>
+                        <div class="list-group list-group-flush">
+                            <a href="{{ url_for('admin.schedule') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-home me-2"></i>Обзор
+                            </a>
+                            <a href="{{ url_for('admin.manage_lessons') }}" class="list-group-item list-group-item-action active">
+                                <i class="fas fa-clock me-2"></i>Занятия
+                            </a>
+                            <a href="{{ url_for('admin.manage_faculties') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-university me-2"></i>Факультеты
+                            </a>
+                            <a href="{{ url_for('admin.manage_groups') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-users me-2"></i>Группы
+                            </a>
+                            <a href="{{ url_for('admin.manage_subjects') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-book me-2"></i>Предметы
+                            </a>
+                            <a href="{{ url_for('admin.manage_teachers') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>Преподаватели
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <!-- Page Title -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-primary fw-bold">
+                        <i class="fas fa-clock me-2"></i>Управление занятиями
+                    </h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLessonModal">
+                        <i class="fas fa-plus me-2"></i>Добавить занятие
+                    </button>
+                </div>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Filters -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form method="GET" class="row g-3">
+                            <div class="col-md-4">
+                                <label for="group" class="form-label">Фильтр по группе</label>
+                                <input type="text" class="form-control" id="group" name="group" 
+                                       value="{{ group_filter or '' }}" placeholder="Название группы">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="date" class="form-label">Фильтр по дате</label>
+                                <input type="date" class="form-control" id="date" name="date" 
+                                       value="{{ date_filter or '' }}">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-outline-primary me-2">
+                                    <i class="fas fa-search me-1"></i>Фильтр
+                                </button>
+                                <a href="{{ url_for('admin.manage_lessons') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i>Сброс
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Lessons List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>Список занятий
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if lessons and lessons.items %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-info">
+                                        <tr>
+                                            <th>Дата</th>
+                                            <th>Время</th>
+                                            <th>Группа</th>
+                                            <th>Предмет</th>
+                                            <th>Преподаватель</th>
+                                            <th>Аудитория</th>
+                                            <th>Тип</th>
+                                            <th>Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for lesson, group, subject, teacher in lessons.items %}
+                                            <tr>
+                                                <td>
+                                                    <strong>{{ lesson.date.strftime('%d.%m.%Y') }}</strong><br>
+                                                    <small class="text-muted">{{ lesson.date.strftime('%A') }}</small>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-primary">
+                                                        {{ lesson.start_time.strftime('%H:%M') }} - {{ lesson.end_time.strftime('%H:%M') }}
+                                                    </span><br>
+                                                    <small class="text-muted">{{ lesson.duration_minutes }} мин</small>
+                                                </td>
+                                                <td><strong>{{ group.name }}</strong></td>
+                                                <td>
+                                                    {{ subject.name_ru }}<br>
+                                                    <small class="text-muted">{{ subject.code }}</small>
+                                                </td>
+                                                <td>{{ teacher.full_name }}</td>
+                                                <td>
+                                                    <i class="fas fa-door-open me-1"></i>{{ lesson.classroom }}
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-{{ 'success' if lesson.lesson_type == 'lecture' else 'warning' if lesson.lesson_type == 'practice' else 'info' }}">
+                                                        {{ lesson.get_lesson_type_display() }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <form method="POST" action="{{ url_for('admin.delete_lesson', lesson_id=lesson.id) }}" 
+                                                          style="display: inline;" onsubmit="return confirm('Вы уверены, что хотите удалить это занятие?')">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination -->
+                            {% if lessons.pages > 1 %}
+                                <nav aria-label="Pagination">
+                                    <ul class="pagination justify-content-center">
+                                        {% if lessons.has_prev %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ url_for('admin.manage_lessons', page=lessons.prev_num, group=group_filter, date=date_filter) }}">Предыдущая</a>
+                                            </li>
+                                        {% endif %}
+                                        
+                                        {% for page_num in lessons.iter_pages() %}
+                                            {% if page_num %}
+                                                {% if page_num != lessons.page %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ url_for('admin.manage_lessons', page=page_num, group=group_filter, date=date_filter) }}">{{ page_num }}</a>
+                                                    </li>
+                                                {% else %}
+                                                    <li class="page-item active">
+                                                        <span class="page-link">{{ page_num }}</span>
+                                                    </li>
+                                                {% endif %}
+                                            {% else %}
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">...</span>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        {% if lessons.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ url_for('admin.manage_lessons', page=lessons.next_num, group=group_filter, date=date_filter) }}">Следующая</a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-calendar-plus fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">Занятий пока нет</h5>
+                                <p class="text-muted">Добавьте первое занятие для начала работы</p>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLessonModal">
+                                    <i class="fas fa-plus me-2"></i>Добавить занятие
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Lesson Modal -->
+    <div class="modal fade" id="addLessonModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus me-2"></i>Добавить занятие
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="{{ url_for('admin.add_lesson') }}">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="group_id" class="form-label">Группа *</label>
+                                <select class="form-select" id="group_id" name="group_id" required>
+                                    <option value="">Выберите группу</option>
+                                    {% for group in groups %}
+                                        <option value="{{ group.id }}">{{ group.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="subject_id" class="form-label">Предмет *</label>
+                                <select class="form-select" id="subject_id" name="subject_id" required>
+                                    <option value="">Выберите предмет</option>
+                                    {% for subject in subjects %}
+                                        <option value="{{ subject.id }}">{{ subject.code }} - {{ subject.name_ru }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="teacher_id" class="form-label">Преподаватель *</label>
+                                <select class="form-select" id="teacher_id" name="teacher_id" required>
+                                    <option value="">Выберите преподавателя</option>
+                                    {% for teacher in teachers %}
+                                        <option value="{{ teacher.id }}">{{ teacher.full_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="date" class="form-label">Дата *</label>
+                                <input type="date" class="form-control" id="date" name="date" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="start_time" class="form-label">Время начала *</label>
+                                <input type="time" class="form-control" id="start_time" name="start_time" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="end_time" class="form-label">Время окончания *</label>
+                                <input type="time" class="form-control" id="end_time" name="end_time" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="classroom" class="form-label">Аудитория *</label>
+                                <input type="text" class="form-control" id="classroom" name="classroom" required 
+                                       placeholder="101, А-205, Лаб-3..." maxlength="50">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lesson_type" class="form-label">Тип занятия</label>
+                                <select class="form-select" id="lesson_type" name="lesson_type">
+                                    <option value="lecture">Лекция</option>
+                                    <option value="practice">Практика</option>
+                                    <option value="lab">Лабораторная</option>
+                                    <option value="exam">Экзамен</option>
+                                    <option value="consultation">Консультация</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Заметки</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"
+                                      placeholder="Дополнительная информация о занятии..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Сохранить
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set current date as default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+    </script>
+</body>
+</html>

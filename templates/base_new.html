@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="{{ get_language() }}" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ _('app.description') }}">
+    <meta name="keywords" content="university, AI, assistant, students, education">
+    <meta name="author" content="Bolashak University">
+
+    <title>{% block title %}{{ _('app.title') }}{% endblock %}</title>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='css/bolashak.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='css/bolashak.png') }}">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-style.css') }}">
+
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Enhanced Navigation -->
+    <nav class="navbar navbar-expand-lg" id="mainNavbar">
+        <div class="container">
+            <!-- Brand -->
+            <a class="navbar-brand" href="{{ url_for('views.index_new') }}">
+                <img src="{{ url_for('static', filename='css/bolashak.png') }}" alt="Logo" width="32" height="32">
+                {{ _('app.title') }}
+            </a>
+
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% block nav_home %}{% endblock %}" href="{{ url_for('views.index_new') }}">
+                            <i class="fas fa-home"></i>
+                            {{ _('navigation.home') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% block nav_chat %}{% endblock %}" href="{{ url_for('views.chat_new') }}">
+                            <i class="fas fa-comments"></i>
+                            {{ _('navigation.chat') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% block nav_about %}{% endblock %}" href="{{ url_for('views.about') }}">
+                            <i class="fas fa-info-circle"></i>
+                            {{ _('navigation.about') }}
+                        </a>
+                    </li>
+                    <!-- Mobile Agent Selector (hidden on desktop, shown only on chat page) -->
+                    <li class="nav-item dropdown d-lg-none" id="mobile-agent-dropdown" style="display: none;">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="mobileAgentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis;">
+                            <i class="fas fa-robot me-2"></i>
+                            <span id="mobile-selected-agent">Общий</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item mobile-agent-option" href="#" data-agent="auto">
+                                <i class="fas fa-magic me-2"></i>Общий
+                            </a></li>
+                            <li><a class="dropdown-item mobile-agent-option" href="#" data-agent="admission">
+                                <i class="fas fa-graduation-cap me-2"></i>{{ _('agent.admission') }}
+                            </a></li>
+                            <li><a class="dropdown-item mobile-agent-option" href="#" data-agent="scholarship">
+                                <i class="fas fa-award me-2"></i>{{ _('agent.scholarship') }}
+                            </a></li>
+                            <li><a class="dropdown-item mobile-agent-option" href="#" data-agent="academic">
+                                <i class="fas fa-book-open me-2"></i>{{ _('agent.academic') }}
+                            </a></li>
+                            <li><a class="dropdown-item mobile-agent-option" href="#" data-agent="student_life">
+                                <i class="fas fa-users me-2"></i>{{ _('agent.student_life') }}
+                            </a></li>
+                            <li><a class="dropdown-item mobile-agent-option" href="#" data-agent="general">
+                                <i class="fas fa-info-circle me-2"></i>{{ _('agent.general') }}
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <!-- Right Side Items -->
+                <ul class="navbar-nav">
+                    <!-- Language Selector -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-globe"></i>
+                            {% if get_language() == 'ru' %}Русский
+                            {% elif get_language() == 'kz' %}Қазақша
+                            {% else %}English
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item {% if get_language() == 'ru' %}active{% endif %}" href="?lang=ru">
+                                <i class="fas fa-flag me-2"></i>Русский
+                            </a></li>
+                            <li><a class="dropdown-item {% if get_language() == 'kz' %}active{% endif %}" href="?lang=kz">
+                                <i class="fas fa-flag me-2"></i>Қазақша
+                            </a></li>
+                            <li><a class="dropdown-item {% if get_language() == 'en' %}active{% endif %}" href="?lang=en">
+                                <i class="fas fa-flag me-2"></i>English
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Theme Toggle -->
+                    <li class="nav-item">
+                        <button class="nav-link border-0 bg-transparent" id="themeToggle" title="{% if get_language() == 'kz' %}Тақырыпты ауыстыру{% elif get_language() == 'en' %}Switch theme{% else %}Переключить тему{% endif %}">
+                            <i class="fas fa-sun" id="themeIcon"></i>
+                        </button>
+                    </li>
+
+
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="btn btn-primary position-fixed d-none" 
+            style="bottom: 2rem; right: 2rem; z-index: 1000; border-radius: 50%; width: 50px; height: 50px; color:white;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Marked.js for Markdown Processing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/modern-app.js') }}"></script>
+
+    <!-- Base App JavaScript -->
+    <script>
+        // Theme Management
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+
+        themeToggle?.addEventListener('click', function() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            if (themeIcon) {
+                themeIcon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            }
+        }
+
+        // Scroll to Top
+        const scrollToTop = document.getElementById('scrollToTop');
+
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                scrollToTop?.classList.remove('d-none');
+            } else {
+                scrollToTop?.classList.add('d-none');
+            }
+        });
+
+        scrollToTop?.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Toast Utility
+        window.showToast = function(message, type = 'info', duration = 5000) {
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) return;
+
+            const toastId = 'toast-' + Date.now();
+            const toastHTML = `
+                <div id="${toastId}" class="toast align-items-center text-white bg-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'primary'} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: duration });
+            toast.show();
+
+            // Clean up after toast is hidden
+            toastElement.addEventListener('hidden.bs.toast', function() {
+                this.remove();
+            });
+        };
+
+        // Enhanced Navbar Behavior
+        let lastScrollY = window.scrollY;
+        const navbar = document.getElementById('mainNavbar');
+
+        window.addEventListener('scroll', function() {
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY > 100) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.backdropFilter = 'blur(10px)';
+                navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            } else {
+                navbar.style.background = '';
+                navbar.style.backdropFilter = '';
+                navbar.style.boxShadow = '';
+            }
+
+            // Auto-hide on mobile scroll down
+            if (window.innerWidth <= 768) {
+                if (currentScrollY > lastScrollY && currentScrollY > 200) {
+                    navbar.style.transform = 'translateY(-100%)';
+                } else {
+                    navbar.style.transform = 'translateY(0)';
+                }
+            }
+
+            lastScrollY = currentScrollY;
+        });
+
+        // Smooth scroll for anchor links
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('a[href^="#"]')) {
+                e.preventDefault();
+                const target = document.querySelector(e.target.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+
+        // Show mobile agent selector only on chat page
+        function updateMobileAgentSelector() {
+            const mobileAgentDropdown = document.getElementById('mobile-agent-dropdown');
+            const isOnChatPage = window.location.pathname.includes('/chat');
+            
+            if (mobileAgentDropdown) {
+                if (isOnChatPage) {
+                    mobileAgentDropdown.style.display = 'block';
+                } else {
+                    mobileAgentDropdown.style.display = 'none';
+                }
+            }
+        }
+
+        // Initial check
+        updateMobileAgentSelector();
+
+        // Check on navigation changes (for SPA-like behavior)
+        window.addEventListener('popstate', updateMobileAgentSelector);
+        
+        // Check on hash changes
+        window.addEventListener('hashchange', updateMobileAgentSelector);
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

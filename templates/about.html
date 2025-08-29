@@ -1,0 +1,347 @@
+{% extends 'base_new.html' %}
+
+{% block title %}{{ _('navigation.about') }} - {{ _('app.title') }}{% endblock %}
+
+{% block nav_about %}active{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row justify-content-center text-center mb-5">
+        <div class="col-lg-8">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="fas fa-university text-primary me-3"></i>
+                {% if get_language() == 'kz' %}
+                Болашақ Университеті туралы
+                {% elif get_language() == 'en' %}
+                About Bolashak University
+                {% else %}
+                О Болашак Университете
+                {% endif %}
+            </h1>
+            <p class="lead ">
+                {% if get_language() == 'kz' %}
+                Қызылорда қаласындағы заманауи білім беру орталығы
+                {% elif get_language() == 'en' %}
+                Modern educational center in Kyzylorda city
+                {% else %}
+                Современный образовательный центр в городе Кызылорда
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- University Info -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-graduation-cap fa-2x text-primary me-3"></i>
+                        <h3 class="card-title mb-0" style="color:var(--text-primary)">
+                            {% if get_language() == 'kz' %}
+                            Біздің миссия
+                            {% elif get_language() == 'en' %}
+                            Our Mission
+                            {% else %}
+                            Наша миссия
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <p class="card-text" style="color:var(--text-primary)">
+                        {% if get_language() == 'kz' %}
+                        Болашақ Университеті студенттерге заманауи білім беру және кәсіби дамуға мүмкіндік ұсынады. Біз инновациялық технологиялар мен дәстүрлі құндылықтарды ұштастырамыз.
+                        {% elif get_language() == 'en' %}
+                        Bolashak University provides students with modern education and professional development opportunities. We combine innovative technologies with traditional values.
+                        {% else %}
+                        Болашак Университет предоставляет студентам современное образование и возможности профессионального развития. Мы объединяем инновационные технологии с традиционными ценностями.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-rocket fa-2x text-primary me-3"></i>
+                        <h3 class="card-title mb-0" style="color:var(--text-primary)">
+                            {% if get_language() == 'kz' %}
+                            Инновациялар
+                            {% elif get_language() == 'en' %}
+                            Innovation
+                            {% else %}
+                            Инновации
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <p class="card-text" style="color:var(--text-primary)">
+                        {% if get_language() == 'kz' %}
+                        AI-көмекші арқылы студенттерге түнгі-күндізгі қолдау көрсетеміз. Біздің чат-бот оқу процесі, мипендетуді және университет өміріне қатысты кез келген сұрақтарға жауап береді.
+                        {% elif get_language() == 'en' %}
+                        We provide 24/7 support to students through our AI assistant. Our chatbot answers any questions related to the learning process, scholarships, and university life.
+                        {% else %}
+                        Мы обеспечиваем круглосуточную поддержку студентов через AI-помощника. Наш чат-бот отвечает на любые вопросы, связанные с учебным процессом, стипендиями и университетской жизнью.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Info -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg bg-primary text-white">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-robot fa-4x mb-3"></i>
+                        <h2 class="card-title">
+                            {% if get_language() == 'kz' %}
+                            AI көмекшісі - AI-SANA
+                            {% elif get_language() == 'en' %}
+                            AI Assistant - AI-SANA
+                            {% else %}
+                            AI-помощник - AI-SANA
+                            {% endif %}
+                        </h2>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-users me-2"></i>
+                                {% if get_language() == 'kz' %}
+                                5 мамандандырылған агент
+                                {% elif get_language() == 'en' %}
+                                5 Specialized Agents
+                                {% else %}
+                                5 специализированных агентов
+                                {% endif %}
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check me-2"></i>
+                                    {% if get_language() == 'kz' %}
+                                    AI-Abitur - Түсу процестері
+                                    {% elif get_language() == 'en' %}
+                                    AI-Abitur - Admission processes
+                                    {% else %}
+                                    AI-Abitur - Процессы поступления
+                                    {% endif %}
+                                </li>
+                                <li><i class="fas fa-check me-2"></i>
+                                    {% if get_language() == 'kz' %}
+                                    KadrAI - HR процестері
+                                    {% elif get_language() == 'en' %}
+                                    KadrAI - HR processes
+                                    {% else %}
+                                    KadrAI - HR процессы
+                                    {% endif %}
+                                </li>
+                                <li><i class="fas fa-check me-2"></i>
+                                    {% if get_language() == 'kz' %}
+                                    UniNav - Академиялық жетекшілік
+                                    {% elif get_language() == 'en' %}
+                                    UniNav - Academic guidance
+                                    {% else %}
+                                    UniNav - Академическое руководство
+                                    {% endif %}
+                                </li>
+                                <li><i class="fas fa-check me-2"></i>
+                                    {% if get_language() == 'kz' %}
+                                    CareerNavigator - Мансап кеңесі
+                                    {% elif get_language() == 'en' %}
+                                    CareerNavigator - Career guidance
+                                    {% else %}
+                                    CareerNavigator - Карьерные консультации
+                                    {% endif %}
+                                </li>
+                                <li><i class="fas fa-check me-2"></i>
+                                    {% if get_language() == 'kz' %}
+                                    UniRoom - Жатақхана қызметтері
+                                    {% elif get_language() == 'en' %}
+                                    UniRoom - Dormitory services
+                                    {% else %}
+                                    UniRoom - Услуги общежития
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-globe me-2"></i>
+                                {% if get_language() == 'kz' %}
+                                Мүмкіндіктер
+                                {% elif get_language() == 'en' %}
+                                Features
+                                {% else %}
+                                Возможности
+                                {% endif %}
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check me-2"></i>
+                                    {% if get_language() == 'kz' %}
+                                    3 тілде қолдау
+                                    {% elif get_language() == 'en' %}
+                                    3 language support
+                                    {% else %}
+                                    Поддержка 3 языков
+                                    {% endif %}
+                                </li>
+                                <li><i class="fas fa-check me-2"></i>
+                                    {% if get_language() == 'kz' %}
+                                    24/7 қолжетімді
+                                    {% elif get_language() == 'en' %}
+                                    24/7 available
+                                    {% else %}
+                                    Доступен 24/7
+                                    {% endif %}
+                                </li>
+                                <li><i class="fas fa-check me-2"></i>
+                                    {% if get_language() == 'kz' %}
+                                    Сөйлесу тарихын сақтау
+                                    {% elif get_language() == 'en' %}
+                                    Chat history saving
+                                    {% else %}
+                                    Сохранение истории чата
+                                    {% endif %}
+                                </li>
+                                <li><i class="fas fa-check me-2"></i>
+                                    {% if get_language() == 'kz' %}
+                                    Пайдаланушы кері байланысы
+                                    {% elif get_language() == 'en' %}
+                                    User feedback system
+                                    {% else %}
+                                    Система обратной связи
+                                    {% endif %}
+                                </li>
+                                <li><i class="fas fa-check me-2"></i>
+                                    {% if get_language() == 'kz' %}
+                                    Жарық/қара тақырып
+                                    {% elif get_language() == 'en' %}
+                                    Light/dark theme
+                                    {% else %}
+                                    Светлая/темная тема
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4" style="color:var(--text-primary)">
+                    <div class="text-center mb-4">
+                        <h3>
+                            {% if get_language() == 'kz' %}
+                            Байланыс ақпараты
+                            {% elif get_language() == 'en' %}
+                            Contact Information
+                            {% else %}
+                            Контактная информация
+                            {% endif %}
+                        </h3>
+                    </div>
+                    
+                    <div class="row g-3 text-center">
+                        <div class="col-md-4">
+                            <div class="d-flex flex-column align-items-center" style="color:var(--text-primary)">
+                                <i class="fas fa-phone fa-2x text-primary mb-2"></i>
+                                <strong>
+                                    {% if get_language() == 'kz' %}
+                                    Телефон
+                                    {% elif get_language() == 'en' %}
+                                    Phone
+                                    {% else %}
+                                    Телефон
+                                    {% endif %}
+                                </strong>
+                                <p class="mb-0">+7 705 421 77 81</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="d-flex flex-column align-items-center">
+                                <i class="fas fa-envelope fa-2x text-primary mb-2"></i>
+                                <strong>Email</strong>
+                                <p class="mb-0">bolashak_5@mail.ru</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="d-flex flex-column align-items-center">
+                                <i class="fas fa-globe fa-2x text-primary mb-2"></i>
+                                <strong>
+                                    {% if get_language() == 'kz' %}
+                                    Веб-сайт
+                                    {% elif get_language() == 'en' %}
+                                    Website
+                                    {% else %}
+                                    Веб-сайт
+                                    {% endif %}
+                                </strong>
+                                <p class="mb-0">
+                                    <a href="https://bolashak-edu.kz" target="_blank" class="text-decoration-none">
+                                        bolashak-edu.kz
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <p class=" mb-0">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            {% if get_language() == 'kz' %}
+                            Қызылорда қаласы, Қазақстан Республикасы
+                            {% elif get_language() == 'en' %}
+                            Kyzylorda city, Republic of Kazakhstan
+                            {% else %}
+                            город Кызылорда, Республика Казахстан
+                            {% endif %}
+                        </p>
+                        <small class="">
+                            {% if get_language() == 'kz' %}
+                            Автобус маршруттары: 1, 16, 18, 24, 25
+                            {% elif get_language() == 'en' %}
+                            Bus routes: 1, 16, 18, 24, 25
+                            {% else %}
+                            Автобусные маршруты: 1, 16, 18, 24, 25
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-6 text-center">
+            <h4 class="mb-3">
+                {% if get_language() == 'kz' %}
+                AI көмекшісін қазір сынап көріңіз!
+                {% elif get_language() == 'en' %}
+                Try our AI assistant now!
+                {% else %}
+                Попробуйте нашего AI-помощника прямо сейчас!
+                {% endif %}
+            </h4>
+            <a href="{{ url_for('views.chat_new') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-comments me-2"></i>
+                {% if get_language() == 'kz' %}
+                Сөйлесуді бастау
+                {% elif get_language() == 'en' %}
+                Start Chat
+                {% else %}
+                Начать чат
+                {% endif %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
