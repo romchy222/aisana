@@ -640,6 +640,79 @@ def process_voice_message():
         return jsonify({'error': 'Failed to process voice message'}), 500
 
 
+@main_bp.route('/api/images', methods=['GET'])
+def get_university_images():
+    """Get list of university images and media files"""
+    try:
+        import os
+        from flask import current_app
+        
+        # Path to images directory
+        images_dir = os.path.join(current_app.static_folder, 'css', 'image')
+        
+        if not os.path.exists(images_dir):
+            return jsonify({'success': False, 'error': 'Images directory not found'}), 404
+        
+        # Get all files from images directory
+        files = []
+        for filename in os.listdir(images_dir):
+            if filename.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.mp4', '.pdf')):
+                file_path = os.path.join(images_dir, filename)
+                file_size = os.path.getsize(file_path)
+                
+                # Determine file type
+                if filename.lower().endswith(('.mp4',)):
+                    file_type = 'video'
+                elif filename.lower().endswith(('.pdf',)):
+                    file_type = 'document'
+                else:
+                    file_type = 'image'
+                
+                # Create description based on filename
+                description = _get_image_description(filename)
+                
+                files.append({
+                    'filename': filename,
+                    'url': f"/static/css/image/{filename}",
+                    'type': file_type,
+                    'size': file_size,
+                    'description': description
+                })
+        
+        # Sort files by type and name
+        files.sort(key=lambda x: (x['type'], x['filename']))
+        
+        return jsonify({
+            'success': True,
+            'images': files,
+            'total': len(files)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting university images: {str(e)}")
+        return jsonify({'success': False, 'error': 'Failed to get images'}), 500
+
+def _get_image_description(filename):
+    """Generate description for image based on filename"""
+    filename_lower = filename.lower()
+    
+    descriptions = {
+        'макет': 'Макет здания университета Болашак',
+        'альбом': 'Фотоальбом университета',
+        'видеоролик': 'Рекламный видеоролик университета',
+        'дронмен': 'Видео с дрона университета',
+        'фото': 'Фотографии университета',
+        'английский': 'Альбом на английском языке',
+        'казахский': 'Альбом на казахском языке', 
+        'русский': 'Альбом на русском языке'
+    }
+    
+    for key, desc in descriptions.items():
+        if key in filename_lower:
+            return desc
+    
+    return f'Изображение: {filename}'
+
 @main_bp.route('/api/tts', methods=['POST'])
 def tts_proxy():
     """

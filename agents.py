@@ -34,6 +34,10 @@ class BaseAgent(ABC):
         try:
             start_time = time.time()
 
+            # Check if this is an image request first
+            if self._is_image_request(message):
+                return self._handle_image_request(message, language, user_id)
+
             # Import advanced components
             from analytics_engine import analytics_engine
             from personalization_engine import personalization_engine
@@ -363,7 +367,8 @@ class AIAbiturAgent(BaseAgent):
         keywords = [
             "поступление", "абитуриент", "документы", "экзамен", "приём", "требования", 
             "специальности", "факультет", "вступительный", "конкурс", "балл", 
-            "подача документов", "зачисление", "направление"
+            "подача документов", "зачисление", "направление", "изображения", "фото", 
+            "картинки", "снимки", "видео", "видеоролик", "альбом", "макет", "здание"
         ]
         message_lower = message.lower()
         matches = sum(1 for k in keywords if k in message_lower)
@@ -373,8 +378,18 @@ class AIAbiturAgent(BaseAgent):
             "как поступить", "документы для поступления", "вступительные экзамены",
             "требования к поступающим", "специальности университета"
         ]
+        
+        # Специальные фразы для изображений
+        image_phrases = [
+            "покажи изображения", "покажи фото", "покажи картинки", "покажи видео",
+            "изображения вуза", "фото университета", "как выглядит университет",
+            "покажи здание", "покажи макет", "покажи альбом", "покажи видеоролик"
+        ]
 
         if any(phrase in message_lower for phrase in admission_phrases):
+            return 1.0
+            
+        if any(phrase in message_lower for phrase in image_phrases):
             return 1.0
 
         return min(1.0, matches * 0.4) if matches > 0 else 0.1
@@ -488,6 +503,113 @@ Your responses should be specific, helpful and supportive. Use Markdown format.
 - Справка о состоянии здоровья
 - Фотографии 3x4
 - Копия удостоверения личности"""
+
+    def _is_image_request(self, message: str) -> bool:
+        """Check if the message is requesting images"""
+        message_lower = message.lower()
+        image_keywords = [
+            "покажи изображения", "покажи фото", "покажи картинки", "покажи видео",
+            "изображения вуза", "фото университета", "как выглядит университет",
+            "покажи здание", "покажи макет", "покажи альбом", "покажи видеоролик",
+            "фотографии", "картинки", "снимки", "видео", "видеоролик", "альбом", "макет"
+        ]
+        return any(keyword in message_lower for keyword in image_keywords)
+
+    def _handle_image_request(self, message: str, language: str, user_id: str) -> Dict[str, Any]:
+        """Handle requests for university images"""
+        try:
+            import requests
+            import json
+            
+            # Get images from API
+            try:
+                # Make request to our own API endpoint
+                response = requests.get('http://localhost:5000/api/images', timeout=5)
+                if response.status_code == 200:
+                    images_data = response.json()
+                    images = images_data.get('images', [])
+                else:
+                    images = []
+            except Exception as e:
+                logger.warning(f"Could not fetch images from API: {e}")
+                images = []
+            
+            # Generate response based on language
+            if language == "kz":
+                response_text = "**Болашак университетінің суреттері мен бейнелері**\n\n"
+                if images:
+                    response_text += "Міне университеттің суреттері мен бейнелері:\n\n"
+                    for img in images[:5]:  # Show first 5 images
+                        if img['type'] == 'image':
+                            response_text += f"🖼️ **{img['description']}**\n"
+                            response_text += f"📁 Файл: {img['filename']}\n\n"
+                        elif img['type'] == 'video':
+                            response_text += f"🎥 **{img['description']}**\n"
+                            response_text += f"📁 Файл: {img['filename']}\n\n"
+                        elif img['type'] == 'document':
+                            response_text += f"📄 **{img['description']}**\n"
+                            response_text += f"📁 Файл: {img['filename']}\n\n"
+                else:
+                    response_text += "Өкінішке орай, қазір суреттер жүктелмеді. Кейінірек қайталап көріңіз."
+            elif language == "en":
+                response_text = "**Bolashak University Images and Videos**\n\n"
+                if images:
+                    response_text += "Here are the university images and videos:\n\n"
+                    for img in images[:5]:  # Show first 5 images
+                        if img['type'] == 'image':
+                            response_text += f"🖼️ **{img['description']}**\n"
+                            response_text += f"📁 File: {img['filename']}\n\n"
+                        elif img['type'] == 'video':
+                            response_text += f"🎥 **{img['description']}**\n"
+                            response_text += f"📁 File: {img['filename']}\n\n"
+                        elif img['type'] == 'document':
+                            response_text += f"📄 **{img['description']}**\n"
+                            response_text += f"📁 File: {img['filename']}\n\n"
+                else:
+                    response_text += "Sorry, images could not be loaded at the moment. Please try again later."
+            else:  # Russian
+                response_text = "**Изображения и видео университета Болашак**\n\n"
+                if images:
+                    response_text += "Вот изображения и видео университета:\n\n"
+                    for img in images[:5]:  # Show first 5 images
+                        if img['type'] == 'image':
+                            response_text += f"🖼️ **{img['description']}**\n"
+                            response_text += f"📁 Файл: {img['filename']}\n\n"
+                        elif img['type'] == 'video':
+                            response_text += f"🎥 **{img['description']}**\n"
+                            response_text += f"📁 Файл: {img['filename']}\n\n"
+                        elif img['type'] == 'document':
+                            response_text += f"📄 **{img['description']}**\n"
+                            response_text += f"📁 Файл: {img['filename']}\n\n"
+                else:
+                    response_text += "К сожалению, изображения не удалось загрузить. Попробуйте позже."
+
+            return {
+                'response': response_text,
+                'confidence': 1.0,
+                'agent_type': self.agent_type,
+                'agent_name': self.name,
+                'context_used': True,
+                'context_confidence': 1.0,
+                'cached': False,
+                'response_time': 0.1,
+                'user_id': user_id,
+                'images': images,  # Include images data for frontend
+                'special_response': 'images'
+            }
+            
+        except Exception as e:
+            logger.error(f"Error handling image request: {e}")
+            return {
+                'response': "Извините, произошла ошибка при загрузке изображений. Попробуйте позже.",
+                'confidence': 0.5,
+                'agent_type': self.agent_type,
+                'agent_name': self.name,
+                'context_used': False,
+                'context_confidence': 0.0,
+                'cached': False,
+                'error': True
+            }
 
 class KadrAIAgent(BaseAgent):
     def __init__(self):

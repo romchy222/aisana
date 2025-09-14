@@ -1168,3 +1168,213 @@ body {
         transform: translateY(0);
     }
 }
+
+/* ===============================
+   Image Gallery Styles
+   =============================== */
+
+.image-gallery {
+    margin: 1rem 0;
+}
+
+.gallery-text {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--primary);
+}
+
+.images-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.image-item {
+    background: var(--bg-card);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.image-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.university-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.university-image:hover {
+    transform: scale(1.05);
+}
+
+.university-video {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background: var(--bg-muted);
+}
+
+.document-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 1rem;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.document-link:hover {
+    background: var(--bg-secondary);
+    color: inherit;
+    text-decoration: none;
+}
+
+.document-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.document-preview i {
+    font-size: 2rem;
+    color: var(--danger);
+}
+
+.document-preview span {
+    font-size: 0.875rem;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.image-description {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-light);
+}
+
+/* Image Modal Styles */
+.image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    padding: 2rem;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.modal-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    background: var(--bg-card);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-2xl);
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.modal-image {
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: contain;
+    display: block;
+}
+
+.modal-description {
+    padding: 1rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Responsive adjustments for image gallery */
+@media (max-width: 768px) {
+    .images-container {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.75rem;
+    }
+    
+    .university-image,
+    .university-video {
+        height: 120px;
+    }
+    
+    .image-modal {
+        padding: 1rem;
+    }
+    
+    .modal-content {
+        max-width: 95vw;
+        max-height: 95vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .images-container {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .university-image,
+    .university-video {
+        height: 100px;
+    }
+    
+    .image-description {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+}

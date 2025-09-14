@@ -189,16 +189,93 @@ function addMessageToChat(sender, message, agentName = null, responseData = null
     const messageText = document.createElement('div');
     messageText.className = 'message-bubble';
 
-    // Process markdown for bot messages if marked.js is available
-    if (sender === 'bot' && typeof marked !== 'undefined') {
-        messageText.innerHTML = marked.parse(message);
+    // Check if this is a special image response
+    if (sender === 'bot' && responseData && responseData.images && responseData.images.length > 0) {
+        // Create image gallery
+        const imageGallery = document.createElement('div');
+        imageGallery.className = 'image-gallery';
+        
+        // Add text content first
+        if (message) {
+            const textContent = document.createElement('div');
+            textContent.className = 'gallery-text';
+            if (typeof marked !== 'undefined') {
+                textContent.innerHTML = marked.parse(message);
+            } else {
+                textContent.innerHTML = message
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/`(.*?)`/g, '<code>$1</code>')
+                    .replace(/\n/g, '<br>');
+            }
+            imageGallery.appendChild(textContent);
+        }
+        
+        // Add images
+        const imagesContainer = document.createElement('div');
+        imagesContainer.className = 'images-container';
+        
+        responseData.images.forEach((image, index) => {
+            const imageItem = document.createElement('div');
+            imageItem.className = 'image-item';
+            
+            if (image.type === 'image') {
+                const img = document.createElement('img');
+                img.src = image.url;
+                img.alt = image.description;
+                img.className = 'university-image';
+                img.loading = 'lazy';
+                
+                // Add click to enlarge functionality
+                img.addEventListener('click', () => openImageModal(image.url, image.description));
+                
+                imageItem.appendChild(img);
+            } else if (image.type === 'video') {
+                const video = document.createElement('video');
+                video.src = image.url;
+                video.controls = true;
+                video.className = 'university-video';
+                video.preload = 'metadata';
+                
+                imageItem.appendChild(video);
+            } else if (image.type === 'document') {
+                const docLink = document.createElement('a');
+                docLink.href = image.url;
+                docLink.target = '_blank';
+                docLink.className = 'document-link';
+                docLink.innerHTML = `
+                    <div class="document-preview">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>${image.description}</span>
+                    </div>
+                `;
+                
+                imageItem.appendChild(docLink);
+            }
+            
+            // Add description
+            const description = document.createElement('div');
+            description.className = 'image-description';
+            description.textContent = image.description;
+            imageItem.appendChild(description);
+            
+            imagesContainer.appendChild(imageItem);
+        });
+        
+        imageGallery.appendChild(imagesContainer);
+        messageText.appendChild(imageGallery);
     } else {
-        // Fallback: simple text formatting
-        messageText.innerHTML = message
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/`(.*?)`/g, '<code>$1</code>')
-            .replace(/\n/g, '<br>');
+        // Process markdown for bot messages if marked.js is available
+        if (sender === 'bot' && typeof marked !== 'undefined') {
+            messageText.innerHTML = marked.parse(message);
+        } else {
+            // Fallback: simple text formatting
+            messageText.innerHTML = message
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+        }
     }
 
     content.appendChild(messageText);
@@ -616,6 +693,54 @@ function showToast(message, type) {
     console.log(`Toast (${type}): ${message}`);
     // Implement actual toast notification logic
 }
+
+// Image modal functionality
+function openImageModal(imageUrl, description) {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('imageModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'imageModal';
+        modal.className = 'image-modal';
+        modal.innerHTML = `
+            <div class="modal-overlay" onclick="closeImageModal()"></div>
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeImageModal()">&times;</button>
+                <img class="modal-image" src="" alt="">
+                <div class="modal-description"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    // Set image and description
+    const modalImage = modal.querySelector('.modal-image');
+    const modalDescription = modal.querySelector('.modal-description');
+    
+    modalImage.src = imageUrl;
+    modalImage.alt = description;
+    modalDescription.textContent = description;
+    
+    // Show modal
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeImageModal();
+    }
+});
+
 // --- End of new functions ---
 
 function getCurrentLanguage() {
