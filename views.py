@@ -404,7 +404,7 @@ def chat():
             f"for language: {language}"
         )
 
-        return jsonify({
+        response_data = {
             'success': True,
             'response': result['response'],
             'response_time': response_time,
@@ -417,7 +417,14 @@ def chat():
             'ml_confidence': result.get('ml_confidence'),
             'detected_language': language,  # Определенный язык
             'feedback': result.get('feedback', {})  # Include feedback metadata
-        })
+        }
+        
+        # Add images data if present
+        if 'images' in result:
+            response_data['images'] = result['images']
+            response_data['special_response'] = result.get('special_response', 'images')
+        
+        return jsonify(response_data)
 
     except Exception as e:
         logger.error(f"Error in chat endpoint: {str(e)}")

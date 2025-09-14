@@ -518,20 +518,47 @@ Your responses should be specific, helpful and supportive. Use Markdown format.
     def _handle_image_request(self, message: str, language: str, user_id: str) -> Dict[str, Any]:
         """Handle requests for university images"""
         try:
-            import requests
-            import json
+            import os
             
-            # Get images from API
+            # Get images directly from filesystem
             try:
-                # Make request to our own API endpoint
-                response = requests.get('http://localhost:5000/api/images', timeout=5)
-                if response.status_code == 200:
-                    images_data = response.json()
-                    images = images_data.get('images', [])
-                else:
+                # Path to images directory
+                images_dir = os.path.join('static', 'css', 'image')
+                
+                if not os.path.exists(images_dir):
                     images = []
+                else:
+                    # Get all files from images directory
+                    images = []
+                    for filename in os.listdir(images_dir):
+                        if filename.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.mp4', '.pdf')):
+                            file_path = os.path.join(images_dir, filename)
+                            file_size = os.path.getsize(file_path)
+                            
+                            # Determine file type
+                            if filename.lower().endswith(('.mp4',)):
+                                file_type = 'video'
+                            elif filename.lower().endswith(('.pdf',)):
+                                file_type = 'document'
+                            else:
+                                file_type = 'image'
+                            
+                            # Create description based on filename
+                            description = self._get_image_description(filename)
+                            
+                            images.append({
+                                'filename': filename,
+                                'url': f"/static/css/image/{filename}",
+                                'type': file_type,
+                                'size': file_size,
+                                'description': description
+                            })
+                    
+                    # Sort files by type and name
+                    images.sort(key=lambda x: (x['type'], x['filename']))
+                    
             except Exception as e:
-                logger.warning(f"Could not fetch images from API: {e}")
+                logger.warning(f"Could not read images directory: {e}")
                 images = []
             
             # Generate response based on language
@@ -539,48 +566,18 @@ Your responses should be specific, helpful and supportive. Use Markdown format.
                 response_text = "**Болашак университетінің суреттері мен бейнелері**\n\n"
                 if images:
                     response_text += "Міне университеттің суреттері мен бейнелері:\n\n"
-                    for img in images[:5]:  # Show first 5 images
-                        if img['type'] == 'image':
-                            response_text += f"🖼️ **{img['description']}**\n"
-                            response_text += f"📁 Файл: {img['filename']}\n\n"
-                        elif img['type'] == 'video':
-                            response_text += f"🎥 **{img['description']}**\n"
-                            response_text += f"📁 Файл: {img['filename']}\n\n"
-                        elif img['type'] == 'document':
-                            response_text += f"📄 **{img['description']}**\n"
-                            response_text += f"📁 Файл: {img['filename']}\n\n"
                 else:
                     response_text += "Өкінішке орай, қазір суреттер жүктелмеді. Кейінірек қайталап көріңіз."
             elif language == "en":
                 response_text = "**Bolashak University Images and Videos**\n\n"
                 if images:
                     response_text += "Here are the university images and videos:\n\n"
-                    for img in images[:5]:  # Show first 5 images
-                        if img['type'] == 'image':
-                            response_text += f"🖼️ **{img['description']}**\n"
-                            response_text += f"📁 File: {img['filename']}\n\n"
-                        elif img['type'] == 'video':
-                            response_text += f"🎥 **{img['description']}**\n"
-                            response_text += f"📁 File: {img['filename']}\n\n"
-                        elif img['type'] == 'document':
-                            response_text += f"📄 **{img['description']}**\n"
-                            response_text += f"📁 File: {img['filename']}\n\n"
                 else:
                     response_text += "Sorry, images could not be loaded at the moment. Please try again later."
             else:  # Russian
                 response_text = "**Изображения и видео университета Болашак**\n\n"
                 if images:
                     response_text += "Вот изображения и видео университета:\n\n"
-                    for img in images[:5]:  # Show first 5 images
-                        if img['type'] == 'image':
-                            response_text += f"🖼️ **{img['description']}**\n"
-                            response_text += f"📁 Файл: {img['filename']}\n\n"
-                        elif img['type'] == 'video':
-                            response_text += f"🎥 **{img['description']}**\n"
-                            response_text += f"📁 Файл: {img['filename']}\n\n"
-                        elif img['type'] == 'document':
-                            response_text += f"📄 **{img['description']}**\n"
-                            response_text += f"📁 Файл: {img['filename']}\n\n"
                 else:
                     response_text += "К сожалению, изображения не удалось загрузить. Попробуйте позже."
 
@@ -610,6 +607,27 @@ Your responses should be specific, helpful and supportive. Use Markdown format.
                 'cached': False,
                 'error': True
             }
+
+    def _get_image_description(self, filename):
+        """Generate description for image based on filename"""
+        filename_lower = filename.lower()
+        
+        descriptions = {
+            'макет': 'Макет здания университета Болашак',
+            'альбом': 'Фотоальбом университета',
+            'видеоролик': 'Рекламный видеоролик университета',
+            'дронмен': 'Видео с дрона университета',
+            'фото': 'Фотографии университета',
+            'английский': 'Альбом на английском языке',
+            'казахский': 'Альбом на казахском языке', 
+            'русский': 'Альбом на русском языке'
+        }
+        
+        for key, desc in descriptions.items():
+            if key in filename_lower:
+                return desc
+        
+        return f'Изображение: {filename}'
 
 class KadrAIAgent(BaseAgent):
     def __init__(self):
